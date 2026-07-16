@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyBigStats - Accueil</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div id="notification-container" role="status" aria-live="polite"></div>
+
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Navigation principale">
+      <a href="index.html" aria-current="page">Accueil</a>
+      <a href="football.html">Football</a>
+      <a href="basketball.html">Basketball</a>
+      <a href="mma.html">MMA</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Événements en cours</h1>
+
+    <section id="home-loading" aria-live="polite">
+      <p>Chargement...</p>
+    </section>
+
+    <section id="current-encounters" aria-live="polite"></section>
+  </main>
+
+  <footer class="site-footer">
+    <p>MyBigStats</p>
+  </footer>
+</body>
+</html>

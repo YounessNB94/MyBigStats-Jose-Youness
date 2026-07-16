@@ -1,0 +1,62 @@
+@media (max-width: 920px) {
+  main,
+  .site-header,
+  .site-footer {
+    width: min(100% - 1.25rem, 1120px);
+  }
+
+  .athlete-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .athlete-filters > div:nth-child(1),
+  .athlete-filters > div:nth-child(2),
+  .athlete-filters > div:nth-child(3),
+  .athlete-filters > button {
+    grid-column: auto;
+  }
+
+  .comparison-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  main {
+    padding-top: 1.25rem;
+  }
+
+  .site-header {
+    border-radius: 28px;
+  }
+
+  .site-nav {
+    gap: 0.5rem;
+  }
+
+  .site-nav a,
+  [role="tab"] {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .tabs {
+    width: 100%;
+    border-radius: 24px;
+  }
+
+  .athlete-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .athlete-filters > button,
+  #compare-athletes,
+  #reset-filters {
+    width: 100%;
+  }
+
+  .site-nav {
+    flex-direction: column;
+  }
+}

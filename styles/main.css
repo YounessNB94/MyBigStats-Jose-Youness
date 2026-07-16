@@ -1,0 +1,208 @@
+@import url("components.css");
+@import url("responsive.css");
+
+:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --bg-elevated: rgba(11, 20, 37, 0.88);
+  --bg-surface: rgba(16, 29, 51, 0.95);
+  --bg-soft: rgba(147, 197, 253, 0.08);
+  --border: rgba(148, 163, 184, 0.16);
+  --border-strong: rgba(96, 165, 250, 0.34);
+  --text: #e5eefb;
+  --muted: #9fb1c9;
+  --primary: #5eead4;
+  --secondary: #60a5fa;
+  --accent: #f59e0b;
+  --danger: #fb7185;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --radius-lg: 24px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+  --content-width: min(1120px, calc(100% - 2rem));
+  --font-body: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(96, 165, 250, 0.24), transparent 32%),
+    radial-gradient(circle at top right, rgba(94, 234, 212, 0.18), transparent 26%),
+    linear-gradient(180deg, #050b14 0%, #08121f 100%);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  background:
+    radial-gradient(circle at top, rgba(96, 165, 250, 0.12), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.06), transparent 25%),
+    transparent;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 90%);
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+main,
+footer,
+.site-header {
+  position: relative;
+  z-index: 1;
+}
+
+main {
+  width: var(--content-width);
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+main > h1 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.site-header {
+  width: var(--content-width);
+  margin: 1rem auto 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(7, 17, 31, 0.72);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+.site-header--sport {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(7, 17, 31, 0.8));
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.site-nav a {
+  padding: 0.8rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--muted);
+  transition:
+    transform 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+  color: var(--text);
+  background: rgba(96, 165, 250, 0.14);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.site-footer {
+  width: var(--content-width);
+  margin: 0 auto 2rem;
+  padding: 1rem 0 0.25rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+#notification-container {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 40;
+  display: grid;
+  gap: 0.75rem;
+  width: min(100%, 24rem);
+}
+
+body[data-sport-slug] main {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.sport-page {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.sport-section,
+#athlete-comparator,
+#current-encounters,
+#home-loading {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow);
+}
+
+#home-loading,
+#current-encounters {
+  padding: 1.25rem;
+}
+
+#home-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 8rem;
+  color: var(--muted);
+}
+
+#current-encounters {
+  display: grid;
+  gap: 1rem;
+}

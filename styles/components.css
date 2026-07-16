@@ -1,0 +1,242 @@
+:root {
+  --card-bg: linear-gradient(180deg, rgba(18, 31, 56, 0.98), rgba(10, 18, 34, 0.98));
+}
+
+.tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(7, 17, 31, 0.74);
+  box-shadow: var(--shadow);
+}
+
+[role="tab"] {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.8rem 1.2rem;
+  color: var(--muted);
+  background: transparent;
+  transition:
+    transform 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+[role="tab"][aria-selected="true"] {
+  color: var(--text);
+  background: rgba(94, 234, 212, 0.13);
+  border-color: rgba(94, 234, 212, 0.3);
+}
+
+[role="tabpanel"] {
+  min-height: 3rem;
+}
+
+.sport-section,
+#athlete-comparator {
+  padding: 1.25rem;
+}
+
+.sport-section h2,
+#athlete-comparator h2 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.athlete-filters {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  margin-bottom: 1rem;
+}
+
+.athlete-filters > div {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.athlete-filters > div:nth-child(1) {
+  grid-column: span 5;
+}
+
+.athlete-filters > div:nth-child(2),
+.athlete-filters > div:nth-child(3) {
+  grid-column: span 3;
+}
+
+.athlete-filters > button {
+  grid-column: span 1;
+  align-self: end;
+}
+
+label {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+input,
+select,
+button {
+  min-height: 2.85rem;
+  border-radius: 0.95rem;
+  border: 1px solid var(--border);
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  color: var(--text);
+  background: rgba(4, 11, 24, 0.8);
+}
+
+input::placeholder {
+  color: #7d8da8;
+}
+
+button {
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.28), rgba(94, 234, 212, 0.18));
+}
+
+button:hover {
+  border-color: rgba(94, 234, 212, 0.45);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+#result-count {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+
+#athlete-list,
+#comparison-result,
+#sport-statistics,
+#sport-history {
+  display: grid;
+  gap: 1rem;
+}
+
+.athlete-card,
+.comparison-card,
+.sport-metric,
+.encounter-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  background: var(--card-bg);
+}
+
+.athlete-card {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.athlete-card h3,
+.comparison-card h3,
+.encounter-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.athlete-card p,
+.comparison-card p,
+.encounter-card p,
+.sport-metric p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.comparison-row {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) minmax(140px, 2.2fr) auto;
+  align-items: center;
+}
+
+.comparison-bar-shell {
+  overflow: hidden;
+  height: 0.95rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.14);
+}
+
+.comparison-bar {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+}
+
+#athlete-comparator {
+  display: grid;
+  gap: 1rem;
+}
+
+#athlete-comparator label {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+#athlete-comparator select {
+  margin-bottom: 0.75rem;
+}
+
+#compare-athletes,
+#reset-filters {
+  width: fit-content;
+}
+
+#compare-athletes {
+  justify-self: start;
+}
+
+.notification {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: var(--radius-md);
+  background: rgba(7, 17, 31, 0.94);
+  box-shadow: var(--shadow);
+}
+
+.notification--success {
+  border-left-color: var(--primary);
+}
+
+.notification--error {
+  border-left-color: var(--danger);
+}
+
+.notification--info {
+  border-left-color: var(--secondary);
+}
+
+.notification__header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.notification__message {
+  margin: 0.35rem 0 0;
+  color: var(--text);
+}
+
+.notification__close {
+  flex: none;
+  width: 2rem;
+  min-height: 2rem;
+  padding: 0;
+  border-radius: 999px;
+  background: transparent;
+}

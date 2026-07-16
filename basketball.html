@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyBigStats - Basketball</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body data-sport-slug="basketball">
+  <div id="notification-container" role="status" aria-live="polite"></div>
+
+  <header class="site-header site-header--sport">
+    <nav class="site-nav" aria-label="Navigation principale">
+      <a href="index.html">Accueil</a>
+      <a href="football.html">Football</a>
+      <a href="basketball.html" aria-current="page">Basketball</a>
+      <a href="mma.html">MMA</a>
+    </nav>
+  </header>
+
+  <main class="sport-page sport-page--basketball">
+    <section class="tabs" role="tablist" aria-label="Informations du sport">
+      <button type="button" role="tab" data-tab-target="stats" aria-controls="sport-statistics" aria-selected="true">Statistiques</button>
+      <button type="button" role="tab" data-tab-target="history" aria-controls="sport-history" aria-selected="false">Historique</button>
+      <button type="button" role="tab" data-tab-target="athletes" aria-controls="athlete-section" aria-selected="false">Athlètes</button>
+    </section>
+
+    <section id="sport-statistics" class="sport-section sport-section--statistics" data-tab-content="stats" role="tabpanel"></section>
+
+    <section id="sport-history" class="sport-section sport-section--history" data-tab-content="history" role="tabpanel" hidden></section>
+
+    <section id="athlete-section" class="sport-section sport-section--athletes" data-tab-content="athletes" role="tabpanel" hidden>
+      <h2>Athlètes</h2>
+
+      <form class="athlete-filters" aria-label="Filtres des athlètes">
+        <div>
+          <label for="athlete-search">Rechercher un athlète</label>
+          <input id="athlete-search" name="athlete-search" type="search" placeholder="Prénom, nom ou surnom">
+        </div>
+
+        <div>
+          <label for="sport-filter">Sport</label>
+          <select id="sport-filter" name="sport-filter">
+            <option value="">Tous les sports</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="position-filter">Position ou catégorie</label>
+          <select id="position-filter" name="position-filter">
+            <option value="">Toutes</option>
+          </select>
+        </div>
+
+        <button id="reset-filters" type="button">Réinitialiser</button>
+      </form>
+
+      <p id="result-count" aria-live="polite"></p>
+      <section id="athlete-list"></section>
+    </section>
+
+    <section id="athlete-comparator" class="sport-section sport-section--comparator">
+      <h2>Comparer deux athlètes</h2>
+
+      <label for="first-athlete">Premier athlète</label>
+      <select id="first-athlete" name="first-athlete">
+        <option value="">Sélectionnez un athlète</option>
+      </select>
+
+      <label for="second-athlete">Deuxième athlète</label>
+      <select id="second-athlete" name="second-athlete">
+        <option value="">Sélectionnez un athlète</option>
+      </select>
+
+      <button id="compare-athletes" type="button">Comparer</button>
+      <div id="comparison-result" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>MyBigStats - Basketball</p>
+  </footer>
+</body>
+</html>
