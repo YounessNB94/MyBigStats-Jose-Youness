@@ -1,27 +1,7 @@
 import { loadHomeData } from "../core/api/home-data.js";
 import { getCurrentEncounters } from "../encounters/encounter.service.js";
 import { renderEncounters } from "../encounters/encounter.view.js";
-
-function showNotification(message: string): void {
-  const container = document.querySelector<HTMLElement>("#notification-container");
-
-  if (!container) {
-    return;
-  }
-
-  const notification = document.createElement("p");
-  notification.textContent = message;
-  notification.setAttribute("role", "alert");
-  container.replaceChildren(notification);
-}
-
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error && error.message) {
-    return error.message;
-  }
-
-  return "Une erreur inattendue est survenue.";
-}
+import { getErrorMessage, setLoaderVisible, showNotification } from "../core/ui/page-state.js";
 
 export async function initHomePage(): Promise<void> {
   const container = document.querySelector<HTMLElement>("#current-encounters");
@@ -31,6 +11,8 @@ export async function initHomePage(): Promise<void> {
     showNotification("Les éléments de la page d'accueil sont introuvables.");
     return;
   }
+
+  setLoaderVisible(loader, true);
 
   try {
     const data = await loadHomeData();
@@ -42,7 +24,7 @@ export async function initHomePage(): Promise<void> {
     showNotification(message);
     console.error("Erreur lors du chargement de la page d'accueil", error);
   } finally {
-    loader.hidden = true;
+    setLoaderVisible(loader, false);
   }
 }
 
