@@ -14,7 +14,17 @@ export function initializeTabs(): void {
     tabButtons.forEach((button) => {
       const isActive = button.dataset.tabTarget === target;
       button.setAttribute("aria-selected", String(isActive));
+      button.tabIndex = isActive ? 0 : -1;
     });
+  }
+
+  const initiallyActiveButton =
+    tabButtons.find(
+      (button) => button.getAttribute("aria-selected") === "true"
+    ) ?? tabButtons[0];
+
+  if (initiallyActiveButton) {
+    activateTab(initiallyActiveButton.dataset.tabTarget);
   }
 
   tabButtons.forEach((button, index) => {
