@@ -14,33 +14,47 @@ export async function getEncounters(): Promise<Encounter[]> {
 export function getHomeEncounterSelection(
   encounters: Encounter[]
 ): HomeEncounterSelection {
-  const liveEncounters = getEncountersByStatus(encounters, "live");
+  const selectedEncounters: Encounter[] = [];
+  let usesDemoFallback = false;
 
-  if (liveEncounters.length > 0) {
-    return {
-      encounters: liveEncounters,
-      usesDemoFallback: false
-    };
+  for (const sportId of [1, 2, 3]) {
+    const liveEncounter = [...encounters]
+      .filter(
+        (encounter) => encounter.sport_id === sportId && encounter.status === "live"
+      )
+      .sort(
+        (first, second) =>
+          new Date(second.date).getTime() - new Date(first.date).getTime()
+      )[0];
+
+    if (liveEncounter) {
+      selectedEncounters.push(liveEncounter);
+      continue;
+    }
+
+    const fallbackEncounter = [...encounters]
+      .filter(
+        (encounter) =>
+          encounter.sport_id === sportId &&
+          (encounter.status === "finished" || encounter.status === "scheduled")
+      )
+      .sort(
+        (first, second) =>
+          new Date(second.date).getTime() - new Date(first.date).getTime()
+      )[0];
+
+    if (fallbackEncounter) {
+      selectedEncounters.push({
+        ...fallbackEncounter,
+        status: "live" as const
+      });
+      usesDemoFallback = true;
+    }
   }
 
-  const fallbackCandidates = [...encounters]
-    .filter(
-      (encounter) =>
-        encounter.status === "finished" || encounter.status === "scheduled"
-    )
-    .sort(
-      (first, second) =>
-        new Date(second.date).getTime() - new Date(first.date).getTime()
-    );
-
-  const demoEncounters = fallbackCandidates.slice(0, 3).map((encounter) => ({
-    ...encounter,
-    status: "live" as const
-  }));
-
   return {
-    encounters: demoEncounters,
-    usesDemoFallback: demoEncounters.length > 0
+    encounters: selectedEncounters,
+    usesDemoFallback
   };
 }
 
