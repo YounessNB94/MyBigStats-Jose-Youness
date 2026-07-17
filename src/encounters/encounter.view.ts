@@ -65,3 +65,51 @@ export function renderEncounters(
 
   container.append(fragment);
 }
+
+export function renderSportHistory(
+  container: HTMLElement,
+  encounters: Encounter[],
+  teams: Team[],
+  sports: Sport[]
+): void {
+  container.replaceChildren();
+
+  const finishedEncounters = [...encounters]
+    .filter((encounter) => encounter.status === "finished")
+    .sort(
+      (first, second) =>
+        new Date(second.date).getTime() - new Date(first.date).getTime()
+    );
+
+  if (finishedEncounters.length === 0) {
+    const message = document.createElement("p");
+    message.textContent = "Aucun historique disponible pour ce sport.";
+    container.append(message);
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+
+  finishedEncounters.forEach((encounter) => {
+    const article = document.createElement("article");
+    article.className = "encounter-card encounter-card--history";
+
+    const title = document.createElement("h3");
+    title.textContent = getEncounterTitle(encounter, teams);
+
+    const sport = findEncounterSport(encounter, sports);
+    const sportName = sport?.name ?? "Sport inconnu";
+
+    article.append(
+      title,
+      createInfoLine("Date", formatEncounterDate(encounter.date)),
+      createInfoLine("Participants", getEncounterTitle(encounter, teams)),
+      createInfoLine("Score final", formatEncounterScore(encounter)),
+      createInfoLine("Sport", sportName)
+    );
+
+    fragment.append(article);
+  });
+
+  container.append(fragment);
+}
