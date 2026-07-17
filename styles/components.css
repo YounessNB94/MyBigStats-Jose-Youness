@@ -2,7 +2,7 @@
   --card-bg: linear-gradient(180deg, rgba(18, 31, 56, 0.98), rgba(10, 18, 34, 0.98));
 }
 
-.tabs {
+.view-switcher {
   display: inline-flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -13,7 +13,7 @@
   box-shadow: var(--shadow);
 }
 
-[role="tab"] {
+.view-link {
   border: 1px solid transparent;
   border-radius: 999px;
   padding: 0.8rem 1.2rem;
@@ -26,7 +26,8 @@
     border-color 150ms ease;
 }
 
-[role="tab"][aria-selected="true"] {
+.view-link.is-active,
+.view-link[aria-current="page"] {
   color: var(--text);
   background: rgba(94, 234, 212, 0.13);
   border-color: rgba(94, 234, 212, 0.3);
@@ -34,6 +35,10 @@
 
 [role="tabpanel"] {
   min-height: 3rem;
+}
+
+.view-switcher a {
+  text-decoration: none;
 }
 
 .sport-section,
@@ -120,6 +125,7 @@ button:active {
 
 #athlete-list,
 #comparison-result,
+#single-athlete-result,
 #sport-statistics,
 #sport-history {
   display: grid;
@@ -128,6 +134,7 @@ button:active {
 
 .athlete-card,
 .comparison-card,
+.athlete-radar-card,
 .sport-metric,
 .encounter-card {
   border: 1px solid var(--border);
@@ -139,6 +146,41 @@ button:active {
 .athlete-card {
   display: grid;
   gap: 0.5rem;
+}
+
+.athlete-radar-card {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+}
+
+.athlete-radar {
+  width: min(100%, 27rem);
+  overflow: visible;
+}
+
+.athlete-radar__grid {
+  fill: none;
+  stroke: rgba(148, 163, 184, 0.18);
+  stroke-width: 1;
+}
+
+.athlete-radar__axis {
+  stroke: rgba(148, 163, 184, 0.22);
+  stroke-width: 1;
+}
+
+.athlete-radar__data {
+  fill: rgba(94, 234, 212, 0.2);
+  stroke: rgba(94, 234, 212, 0.85);
+  stroke-width: 2;
+}
+
+.athlete-radar__label {
+  fill: var(--text);
+  font-size: 9px;
+  text-anchor: middle;
+  dominant-baseline: middle;
 }
 
 .athlete-card h3,

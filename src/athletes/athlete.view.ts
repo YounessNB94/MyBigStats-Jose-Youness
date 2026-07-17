@@ -7,7 +7,7 @@ import {
 
 interface AthleteStatEntry {
   label: string;
-  value: number;
+  value: number | string;
 }
 
 function getAthleteKeyStats(athlete: Athlete): AthleteStatEntry[] {
@@ -31,6 +31,49 @@ function getAthleteKeyStats(athlete: Athlete): AthleteStatEntry[] {
   ];
 }
 
+function getAthleteDetailedStats(athlete: Athlete): AthleteStatEntry[] {
+  if (isMmaAthlete(athlete)) {
+    return [
+      { label: "Victoires par KO", value: athlete.stats.wins_by_ko },
+      { label: "Victoires par soumission", value: athlete.stats.wins_by_submission },
+      { label: "Victoires par décision", value: athlete.stats.wins_by_decision },
+      { label: "Défenses de titre", value: athlete.stats.title_defenses }
+    ];
+  }
+
+  if (athlete.sport_id === 1) {
+    return [
+      { label: "Matchs joués", value: athlete.stats.matches_played },
+      { label: "Minutes jouées", value: athlete.stats.minutes_played },
+      { label: "Cartons jaunes", value: athlete.stats.yellow_cards },
+      { label: "Cartons rouges", value: athlete.stats.red_cards }
+    ];
+  }
+
+  return [
+    { label: "Matchs joués", value: athlete.stats.games_played },
+    { label: "Passes par match", value: athlete.stats.assists_per_game },
+    { label: "Interceptions par match", value: athlete.stats.steals_per_game },
+    { label: "Contres par match", value: athlete.stats.blocks_per_game }
+  ];
+}
+
+function createStatsDetails(athlete: Athlete): HTMLElement {
+  const section = document.createElement("div");
+  const title = document.createElement("p");
+  title.textContent = "Statistiques détaillées";
+
+  section.append(title);
+
+  getAthleteDetailedStats(athlete).forEach((stat) => {
+    const entry = document.createElement("p");
+    entry.textContent = `${stat.label} : ${stat.value}`;
+    section.append(entry);
+  });
+
+  return section;
+}
+
 export function createAthleteCard(athlete: Athlete): HTMLElement {
   const article = document.createElement("article");
   const name = document.createElement("h3");
@@ -49,7 +92,7 @@ export function createAthleteCard(athlete: Athlete): HTMLElement {
     .map((stat) => `${stat.label} : ${stat.value}`)
     .join(" · ");
 
-  article.append(name, role, nationality, stats);
+  article.append(name, role, nationality, stats, createStatsDetails(athlete));
 
   return article;
 }

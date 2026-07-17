@@ -8,16 +8,54 @@ import {
   getComparatorElements,
   initializeComparator
 } from "../comparator/comparator.view.js";
-import { initializeTabs } from "../tabs/tabs.controller.js";
 import { notifyError } from "../core/notifications/notification.view.js";
-import { AppError, SportNotFoundError } from "../core/errors/api.errors.js";
-import type { SportSlug } from "../sports/sport.types.js";
+import { AppError } from "../core/errors/api.errors.js";
+import { calculateSportStatistics } from "../sports/sport.statistics.js";
+import { renderSportStatistics } from "../sports/sport.statistics.view.js";
+import { renderSportHistory } from "../encounters/encounter.view.js";
+import { loadSportPageData } from "./sport-data.page.js";
 
-const SPORT_IDS_BY_SLUG: Record<SportSlug, 1 | 2 | 3> = {
-  football: 1,
-  basketball: 2,
-  mma: 3
-};
+type SportView = "stats" | "history" | "athletes";
+
+function getCurrentSportView(): SportView {
+  const bodyView = document.body.dataset.sportView;
+
+  if (
+    bodyView === "stats" ||
+    bodyView === "history" ||
+    bodyView === "athletes"
+  ) {
+    return bodyView;
+  }
+
+  const query = new URLSearchParams(window.location.search).get("view");
+
+  if (query === "history") {
+    return "history";
+  }
+
+  if (query === "athletes") {
+    return "athletes";
+  }
+
+  return "stats";
+}
+
+function setActiveSportView(view: SportView): void {
+  const sections = document.querySelectorAll<HTMLElement>("[data-view-section]");
+  const links = document.querySelectorAll<HTMLAnchorElement>("[data-view-link]");
+
+  sections.forEach((section) => {
+    const sectionView = section.dataset.viewSection as SportView | undefined;
+    section.hidden = sectionView !== view;
+  });
+
+  links.forEach((link) => {
+    const isActive = link.dataset.viewLink === view;
+    link.classList.toggle("is-active", isActive);
+    link.setAttribute("aria-current", isActive ? "page" : "false");
+  });
+}
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof AppError) {
@@ -28,34 +66,57 @@ function getErrorMessage(error: unknown): string {
 }
 
 async function initSportInteractions(): Promise<void> {
-  initializeTabs();
-
   try {
-    const slug = document.body.dataset.sportSlug as SportSlug | undefined;
-    const sportId = slug ? SPORT_IDS_BY_SLUG[slug] : undefined;
+    const sportPageData = await loadSportPageData();
+    const currentView = getCurrentSportView();
 
-    if (!sportId) {
-      throw new SportNotFoundError(slug ?? "inconnu");
-    }
-
-    const athletes = await getAthletes();
-    const sportAthletes = getAthletesBySportId(athletes, sportId);
-
-    const filterElements = getAthleteFilterElements();
+    const statisticsContainer = document.querySelector<HTMLElement>(
+      "#sport-statistics"
+    );
+    const historyContainer = document.querySelector<HTMLElement>("#sport-history");
     const athleteListContainer = document.querySelector<HTMLElement>(
       "#athlete-list"
     );
-
-    if (filterElements) {
-      initializeAthleteFilters(filterElements, sportAthletes);
-    } else if (athleteListContainer) {
-      renderAthletes(athleteListContainer, sportAthletes);
-    }
-
     const comparatorElements = getComparatorElements();
 
-    if (comparatorElements) {
-      initializeComparator(comparatorElements, sportAthletes);
+    setActiveSportView(currentView);
+
+    if (currentView === "stats" && statisticsContainer) {
+      renderSportStatistics(
+        statisticsContainer,
+        calculateSportStatistics(sportPageData.encounters, sportPageData.teams)
+      );
+    }
+
+    if (currentView === "history" && historyContainer) {
+      renderSportHistory(
+        historyContainer,
+        sportPageData.encounters,
+        sportPageData.teams,
+        sportPageData.sports
+      );
+    }
+
+    if (currentView === "stats" || currentView === "athletes") {
+      const athletes = await getAthletes();
+      const sportAthletes = getAthletesBySportId(
+        athletes,
+        sportPageData.sport.id
+      );
+
+      if (currentView === "stats" && comparatorElements) {
+        initializeComparator(comparatorElements, sportAthletes);
+      }
+
+      if (currentView === "athletes") {
+        const filterElements = getAthleteFilterElements();
+
+        if (filterElements) {
+          initializeAthleteFilters(filterElements, sportAthletes);
+        } else if (athleteListContainer) {
+          renderAthletes(athleteListContainer, sportAthletes);
+        }
+      }
     }
   } catch (error: unknown) {
     notifyError(getErrorMessage(error));

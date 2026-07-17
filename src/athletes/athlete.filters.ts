@@ -39,14 +39,10 @@ export function applyAthleteFilters(
       fullName.includes(normalizedQuery) ||
       nickname.includes(normalizedQuery);
 
-    const matchesSport =
-      filters.sportId === undefined ||
-      athlete.sport_id === filters.sportId;
-
     const matchesPosition =
       !filters.position ||
       role === normalizeText(filters.position);
 
-    return matchesQuery && matchesSport && matchesPosition;
+    return matchesQuery && matchesPosition;
   });
 }

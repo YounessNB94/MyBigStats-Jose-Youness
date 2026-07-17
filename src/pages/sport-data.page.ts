@@ -14,6 +14,7 @@ import type { Team } from "../teams/team.types.js";
 
 export interface SportPageData {
   sport: Sport;
+  sports: Sport[];
   teams: Team[];
   encounters: Encounter[];
   currentEncounters: Encounter[];
@@ -45,6 +46,7 @@ export async function loadSportPageData(): Promise<SportPageData> {
 
   return {
     sport,
+    sports: data.sports,
     teams: sportTeams,
     encounters: sportEncounters,
     currentEncounters: getCurrentEncounters(sportEncounters),

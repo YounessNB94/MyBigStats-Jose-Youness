@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyBigStats - MMA - Athlètes</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body data-sport-slug="mma" data-sport-view="athletes">
+  <div id="notification-container" role="status" aria-live="polite"></div>
+
+  <header class="site-header site-header--sport">
+    <nav class="site-nav" aria-label="Navigation principale">
+      <a href="index.html">Accueil</a>
+      <a href="football.html">Football</a>
+      <a href="basketball.html">Basketball</a>
+      <a href="mma.html">MMA</a>
+    </nav>
+  </header>
+
+  <main class="sport-page sport-page--mma">
+    <nav class="view-switcher" aria-label="Vues du sport">
+      <a href="mma.html" class="view-link" data-view-link="stats">Statistiques</a>
+      <a href="mma-history.html" class="view-link" data-view-link="history">Historique</a>
+      <a href="mma-athletes.html" class="view-link" data-view-link="athletes" aria-current="page">Athlètes</a>
+    </nav>
+
+    <section id="athlete-section" class="sport-section sport-section--athletes" data-view-section="athletes" role="tabpanel">
+      <h2>Athlètes</h2>
+
+      <form class="athlete-filters" aria-label="Filtres des athlètes">
+        <div>
+          <label for="athlete-search">Rechercher un athlète</label>
+          <input id="athlete-search" name="athlete-search" type="search" placeholder="Prénom, nom ou surnom">
+        </div>
+
+        <div>
+          <label for="position-filter">Position ou catégorie</label>
+          <select id="position-filter" name="position-filter">
+            <option value="">Toutes</option>
+          </select>
+        </div>
+
+        <button id="reset-filters" type="button">Réinitialiser</button>
+      </form>
+
+      <p id="result-count" aria-live="polite"></p>
+      <section id="athlete-list"></section>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>MyBigStats - MMA - Athlètes</p>
+  </footer>
+
+  <script type="module" src="dist/pages/sport-interactions.page.js"></script>
+</body>
+</html>

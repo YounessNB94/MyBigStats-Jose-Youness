@@ -1,5 +1,5 @@
 import { loadHomeData } from "../core/api/home-data.js";
-import { getCurrentEncounters } from "../encounters/encounter.service.js";
+import { getHomeEncounterSelection } from "../encounters/encounter.service.js";
 import { renderEncounters } from "../encounters/encounter.view.js";
 import { getErrorMessage, setLoaderVisible, showNotification } from "../core/ui/page-state.js";
 
@@ -16,9 +16,16 @@ export async function initHomePage(): Promise<void> {
 
   try {
     const data = await loadHomeData();
-    const currentEncounters = getCurrentEncounters(data.encounters);
+    const homeSelection = getHomeEncounterSelection(data.encounters);
 
-    renderEncounters(container, currentEncounters, data.teams, data.sports);
+    renderEncounters(container, homeSelection.encounters, data.teams, data.sports);
+
+    if (homeSelection.usesDemoFallback) {
+      const note = document.createElement("p");
+      note.className = "home-demo-note";
+      note.textContent = "Aucun événement live n’est disponible ; affichage de démonstration.";
+      container.prepend(note);
+    }
   } catch (error: unknown) {
     const message = getErrorMessage(error);
     showNotification(message);
