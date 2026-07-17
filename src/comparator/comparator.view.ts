@@ -81,6 +81,21 @@ function renderComparisonError(container: HTMLElement, message: string): void {
   container.append(errorMessage);
 }
 
+function getBestValueLabel(
+  value: ComparisonValue,
+  firstAthlete: Athlete,
+  secondAthlete: Athlete
+): string {
+  if (value.firstValue === value.secondValue) {
+    return "Égalité";
+  }
+
+  const winner =
+    value.firstValue > value.secondValue ? firstAthlete : secondAthlete;
+
+  return `Meilleure valeur : ${getAthleteDisplayName(winner)}`;
+}
+
 function renderComparisonResult(
   container: HTMLElement,
   firstAthlete: Athlete,
@@ -96,10 +111,28 @@ function renderComparisonResult(
   title.textContent = `${getAthleteDisplayName(firstAthlete)} vs ${getAthleteDisplayName(secondAthlete)}`;
   card.append(title);
 
+  if (values.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.textContent = "Aucune statistique disponible pour ce sport.";
+    card.append(emptyMessage);
+    container.append(card);
+    return;
+  }
+
   values.forEach((value) => {
-    const row = document.createElement("p");
-    row.textContent = `${value.label} — ${getAthleteDisplayName(firstAthlete)} : ${value.firstValue} | ${getAthleteDisplayName(secondAthlete)} : ${value.secondValue}`;
-    card.append(row);
+    const metricTitle = document.createElement("h4");
+    metricTitle.textContent = value.label;
+
+    const firstLine = document.createElement("p");
+    firstLine.textContent = `${getAthleteDisplayName(firstAthlete)} : ${value.firstValue}`;
+
+    const secondLine = document.createElement("p");
+    secondLine.textContent = `${getAthleteDisplayName(secondAthlete)} : ${value.secondValue}`;
+
+    const bestLine = document.createElement("p");
+    bestLine.textContent = getBestValueLabel(value, firstAthlete, secondAthlete);
+
+    card.append(metricTitle, firstLine, secondLine, bestLine);
   });
 
   container.append(card);

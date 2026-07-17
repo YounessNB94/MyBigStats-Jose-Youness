@@ -31,8 +31,8 @@ export const comparisonMetrics: Record<1 | 2 | 3, ComparisonMetric[]> = {
   ],
   3: [
     { key: "wins", label: "Victoires" },
-    { key: "losses", label: "Défaites" },
     { key: "wins_by_ko", label: "Victoires par KO" },
+    { key: "wins_by_submission", label: "Victoires par soumission" },
     { key: "title_defenses", label: "Défenses de titre" }
   ]
 };
