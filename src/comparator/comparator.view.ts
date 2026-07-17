@@ -96,6 +96,44 @@ function getBestValueLabel(
   return `Meilleure valeur : ${getAthleteDisplayName(winner)}`;
 }
 
+export function calculateBarWidth(value: number, maximum: number): number {
+  if (maximum <= 0) {
+    return 0;
+  }
+
+  return Math.round((value / maximum) * 100);
+}
+
+function createComparisonBarRow(
+  athleteName: string,
+  value: number,
+  maximum: number,
+  metricLabel: string
+): HTMLElement {
+  const row = document.createElement("div");
+  row.classList.add("comparison-row");
+
+  const name = document.createElement("span");
+  name.textContent = athleteName;
+
+  const barShell = document.createElement("div");
+  barShell.classList.add("comparison-bar-shell");
+
+  const bar = document.createElement("div");
+  bar.classList.add("comparison-bar");
+  bar.style.width = `${calculateBarWidth(value, maximum)}%`;
+  bar.setAttribute("role", "img");
+  bar.setAttribute("aria-label", `${value} ${metricLabel.toLowerCase()}`);
+  barShell.append(bar);
+
+  const valueLabel = document.createElement("strong");
+  valueLabel.textContent = String(value);
+
+  row.append(name, barShell, valueLabel);
+
+  return row;
+}
+
 function renderComparisonResult(
   container: HTMLElement,
   firstAthlete: Athlete,
@@ -123,16 +161,26 @@ function renderComparisonResult(
     const metricTitle = document.createElement("h4");
     metricTitle.textContent = value.label;
 
-    const firstLine = document.createElement("p");
-    firstLine.textContent = `${getAthleteDisplayName(firstAthlete)} : ${value.firstValue}`;
+    const maximum = Math.max(value.firstValue, value.secondValue);
 
-    const secondLine = document.createElement("p");
-    secondLine.textContent = `${getAthleteDisplayName(secondAthlete)} : ${value.secondValue}`;
+    const firstRow = createComparisonBarRow(
+      getAthleteDisplayName(firstAthlete),
+      value.firstValue,
+      maximum,
+      value.label
+    );
+
+    const secondRow = createComparisonBarRow(
+      getAthleteDisplayName(secondAthlete),
+      value.secondValue,
+      maximum,
+      value.label
+    );
 
     const bestLine = document.createElement("p");
     bestLine.textContent = getBestValueLabel(value, firstAthlete, secondAthlete);
 
-    card.append(metricTitle, firstLine, secondLine, bestLine);
+    card.append(metricTitle, firstRow, secondRow, bestLine);
   });
 
   container.append(card);
