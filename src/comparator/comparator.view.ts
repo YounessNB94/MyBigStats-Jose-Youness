@@ -15,6 +15,11 @@ export interface ComparatorElements {
   comparisonResult: HTMLElement;
 }
 
+interface RadarScale {
+  metricLabel: string;
+  maxValue: number;
+}
+
 export function getComparatorElements(): ComparatorElements | null {
   const singleAthleteSelect = document.querySelector<HTMLSelectElement>(
     "#single-athlete"
@@ -95,20 +100,45 @@ function getAthleteMetricValues(athlete: Athlete): number[] {
   });
 }
 
-function getRadarPoints(values: number[], radius: number): string {
+function getRadarScales(athletes: Athlete[], sportId: 1 | 2 | 3): RadarScale[] {
+  const metrics = comparisonMetrics[sportId];
+
+  return metrics.map((metric) => {
+    const maxValue = athletes.reduce((currentMax, athlete) => {
+      if (athlete.sport_id !== sportId) {
+        return currentMax;
+      }
+
+      const stats = athlete.stats as unknown as Record<string, number>;
+      const value = stats[metric.key] ?? 0;
+
+      return Math.max(currentMax, value);
+    }, 0);
+
+    return {
+      metricLabel: metric.label,
+      maxValue: Math.max(maxValue, 1)
+    };
+  });
+}
+
+function getRadarPoints(
+  values: number[],
+  scales: RadarScale[],
+  radius: number
+): string {
   const count = values.length;
 
   if (count === 0) {
     return "";
   }
 
-  const maxValue = Math.max(...values, 1);
   const center = 100;
 
   return values
     .map((value, index) => {
       const angle = (Math.PI * 2 * index) / count - Math.PI / 2;
-      const distance = (value / maxValue) * radius;
+      const distance = (value / scales[index].maxValue) * radius;
       const x = center + Math.cos(angle) * distance;
       const y = center + Math.sin(angle) * distance;
 
@@ -117,7 +147,11 @@ function getRadarPoints(values: number[], radius: number): string {
     .join(" ");
 }
 
-function getAxisLabelPosition(index: number, count: number, radius: number): { x: number; y: number } {
+function getAxisLabelPosition(
+  index: number,
+  count: number,
+  radius: number
+): { x: number; y: number } {
   const angle = (Math.PI * 2 * index) / count - Math.PI / 2;
   const labelRadius = radius + 18;
 
@@ -127,7 +161,20 @@ function getAxisLabelPosition(index: number, count: number, radius: number): { x
   };
 }
 
-function createRadarChart(athlete: Athlete): SVGSVGElement {
+function getRingLabelPosition(
+  index: number,
+  count: number,
+  radius: number
+): { x: number; y: number } {
+  const angle = (Math.PI * 2 * index) / count - Math.PI / 2;
+
+  return {
+    x: 100 + Math.cos(angle) * radius,
+    y: 100 + Math.sin(angle) * radius
+  };
+}
+
+function createRadarChart(athlete: Athlete, scales: RadarScale[]): SVGSVGElement {
   const metrics = comparisonMetrics[athlete.sport_id];
   const values = getAthleteMetricValues(athlete);
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -143,7 +190,12 @@ function createRadarChart(athlete: Athlete): SVGSVGElement {
 
   const description = document.createElementNS("http://www.w3.org/2000/svg", "desc");
   description.textContent = metrics
-    .map((metric, index) => `${metric.label}: ${values[index] ?? 0}`)
+    .map((metric, index) => {
+      const maxValue = scales[index]?.maxValue ?? 1;
+      const percentage = Math.round(((values[index] ?? 0) / maxValue) * 100);
+
+      return `${metric.label}: ${values[index] ?? 0} (${percentage}%)`;
+    })
     .join(". ");
   svg.append(description);
 
@@ -179,7 +231,7 @@ function createRadarChart(athlete: Athlete): SVGSVGElement {
   });
 
   const dataPolygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-  dataPolygon.setAttribute("points", getRadarPoints(values, 70));
+  dataPolygon.setAttribute("points", getRadarPoints(values, scales, 70));
   dataPolygon.setAttribute("class", "athlete-radar__data");
   svg.append(dataPolygon);
 
@@ -193,10 +245,57 @@ function createRadarChart(athlete: Athlete): SVGSVGElement {
     svg.append(label);
   });
 
+  values.forEach((value, index) => {
+    const scale = scales[index];
+    const angle = (Math.PI * 2 * index) / values.length - Math.PI / 2;
+    const distance = (value / scale.maxValue) * 70;
+
+    const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    point.setAttribute("cx", (100 + Math.cos(angle) * distance).toFixed(1));
+    point.setAttribute("cy", (100 + Math.sin(angle) * distance).toFixed(1));
+    point.setAttribute("r", "2.8");
+    point.setAttribute("class", "athlete-radar__point");
+    svg.append(point);
+  });
+
   return svg;
 }
 
-function createSingleAthleteRadarCard(athlete: Athlete): HTMLElement {
+function createRadarStatsSummary(
+  athlete: Athlete,
+  scales: RadarScale[]
+): HTMLElement {
+  const summary = document.createElement("div");
+  summary.classList.add("athlete-radar-summary");
+
+  const metrics = comparisonMetrics[athlete.sport_id];
+  const values = getAthleteMetricValues(athlete);
+
+  metrics.forEach((metric, index) => {
+    const row = document.createElement("div");
+    row.classList.add("athlete-radar-summary__item");
+
+    const label = document.createElement("strong");
+    label.textContent = metric.label;
+
+    const value = document.createElement("span");
+    const maxValue = scales[index]?.maxValue ?? 1;
+    const currentValue = values[index] ?? 0;
+    const percentage = Math.round((currentValue / maxValue) * 100);
+
+    value.textContent = `${currentValue} / ${maxValue} (${percentage}%)`;
+
+    row.append(label, value);
+    summary.append(row);
+  });
+
+  return summary;
+}
+
+function createSingleAthleteRadarCard(
+  athlete: Athlete,
+  scales: RadarScale[]
+): HTMLElement {
   const article = document.createElement("article");
   article.classList.add("athlete-radar-card");
 
@@ -206,14 +305,20 @@ function createSingleAthleteRadarCard(athlete: Athlete): HTMLElement {
   const role = document.createElement("p");
   role.textContent = getAthleteRole(athlete);
 
-  article.append(title, role, createRadarChart(athlete));
+  article.append(
+    title,
+    role,
+    createRadarChart(athlete, scales),
+    createRadarStatsSummary(athlete, scales)
+  );
 
   return article;
 }
 
 function renderSingleAthleteResult(
   container: HTMLElement,
-  athlete: Athlete | undefined
+  athlete: Athlete | undefined,
+  athletes: Athlete[]
 ): void {
   container.replaceChildren();
 
@@ -225,7 +330,12 @@ function renderSingleAthleteResult(
     return;
   }
 
-  container.append(createSingleAthleteRadarCard(athlete));
+  container.append(
+    createSingleAthleteRadarCard(
+      athlete,
+      getRadarScales(athletes, athlete.sport_id)
+    )
+  );
 }
 
 function renderComparisonError(container: HTMLElement, message: string): void {
@@ -345,7 +455,7 @@ export function initializeComparator(
   elements: ComparatorElements,
   athletes: Athlete[]
 ): void {
-  renderSingleAthleteResult(elements.singleAthleteResult, undefined);
+  renderSingleAthleteResult(elements.singleAthleteResult, undefined, athletes);
   populateAthleteSelect(elements.firstAthleteSelect, athletes);
   populateAthleteSelect(elements.secondAthleteSelect, athletes);
   populateAthleteSelect(elements.singleAthleteSelect, athletes);
@@ -353,7 +463,8 @@ export function initializeComparator(
   elements.singleAthleteSelect.addEventListener("change", () => {
     renderSingleAthleteResult(
       elements.singleAthleteResult,
-      getSelectedAthlete(elements.singleAthleteSelect, athletes)
+      getSelectedAthlete(elements.singleAthleteSelect, athletes),
+      athletes
     );
   });
 

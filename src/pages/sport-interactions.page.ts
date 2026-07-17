@@ -106,15 +106,34 @@ async function initSportInteractions(): Promise<void> {
 
       if (currentView === "stats" && comparatorElements) {
         initializeComparator(comparatorElements, sportAthletes);
+
+        const athleteId = new URLSearchParams(window.location.search).get(
+          "athlete"
+        );
+
+        if (athleteId) {
+          comparatorElements.singleAthleteSelect.value = athleteId;
+          comparatorElements.singleAthleteSelect.dispatchEvent(
+            new Event("change")
+          );
+        }
       }
 
       if (currentView === "athletes") {
         const filterElements = getAthleteFilterElements();
 
         if (filterElements) {
-          initializeAthleteFilters(filterElements, sportAthletes);
+          initializeAthleteFilters(
+            filterElements,
+            sportAthletes,
+            sportPageData.sport.slug
+          );
         } else if (athleteListContainer) {
-          renderAthletes(athleteListContainer, sportAthletes);
+          renderAthletes(
+            athleteListContainer,
+            sportAthletes,
+            sportPageData.sport.slug
+          );
         }
       }
     }

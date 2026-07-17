@@ -40,7 +40,8 @@ export function getAthleteFilterElements(): AthleteFilterElements | null {
 
 export function initializeAthleteFilters(
   elements: AthleteFilterElements,
-  athletes: Athlete[]
+  athletes: Athlete[],
+  sportSlug?: string
 ): void {
   const filters: ActiveAthleteFilters = {};
 
@@ -49,7 +50,7 @@ export function initializeAthleteFilters(
   function applyAndRender(): void {
     const filteredAthletes = applyAthleteFilters(athletes, filters);
 
-    renderAthletes(elements.athleteList, filteredAthletes);
+    renderAthletes(elements.athleteList, filteredAthletes, sportSlug);
 
     elements.resultCount.textContent =
       `${filteredAthletes.length} athlète(s) trouvé(s)`;

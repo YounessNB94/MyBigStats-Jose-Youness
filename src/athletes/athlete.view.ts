@@ -5,6 +5,10 @@ import {
   isMmaAthlete
 } from "./athlete.utils.js";
 
+interface AthleteCardOptions {
+  href?: string;
+}
+
 interface AthleteStatEntry {
   label: string;
   value: number | string;
@@ -74,14 +78,23 @@ function createStatsDetails(athlete: Athlete): HTMLElement {
   return section;
 }
 
-export function createAthleteCard(athlete: Athlete): HTMLElement {
-  const article = document.createElement("article");
+export function createAthleteCard(
+  athlete: Athlete,
+  options: AthleteCardOptions = {}
+): HTMLElement {
+  const article = options.href
+    ? document.createElement("a")
+    : document.createElement("article");
   const name = document.createElement("h3");
   const role = document.createElement("p");
   const nationality = document.createElement("p");
   const stats = document.createElement("p");
 
   article.classList.add("athlete-card");
+  if (options.href) {
+    article.classList.add("athlete-card--link");
+    article.setAttribute("href", options.href);
+  }
   article.dataset.athleteId = String(athlete.id);
 
   name.textContent = getAthleteDisplayName(athlete);
@@ -99,7 +112,8 @@ export function createAthleteCard(athlete: Athlete): HTMLElement {
 
 export function renderAthletes(
   container: HTMLElement,
-  athletes: Athlete[]
+  athletes: Athlete[],
+  sportSlug?: string
 ): void {
   container.replaceChildren();
 
@@ -113,7 +127,8 @@ export function renderAthletes(
   const fragment = document.createDocumentFragment();
 
   athletes.forEach((athlete) => {
-    fragment.append(createAthleteCard(athlete));
+    const href = sportSlug ? `${sportSlug}.html?athlete=${athlete.id}` : undefined;
+    fragment.append(createAthleteCard(athlete, { href }));
   });
 
   container.append(fragment);
